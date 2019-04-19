@@ -4,19 +4,22 @@ from dataclasses import dataclass, field
 from typing import DefaultDict, List, Any, Dict
 import copy
 
+
+from ilya_ezplot.metric.cached_parameters_mixin import CachedParamMixin
 from ilya_ezplot.metric.interpolate import missing_value
 
 
 @dataclass(eq=False)
-class Metric:
+class Metric(CachedParamMixin):
     x_label: str
     y_label: str
     data: DefaultDict[float, List[float]] = field(default_factory=lambda: defaultdict(list))
     style_kwargs: Dict[str: Any] = field(default_factory=lambda: {})
 
+
     @property
     def samples(self):
-        assert len(set( len(x) for x in self.data.values() )) == 1
+        # assert len(set( len(x) for x in self.data.values() )) == 1
         return len( next( iter(self.data.values()) ) )
 
     def sort(self):
@@ -26,9 +29,12 @@ class Metric:
 
     def add_record(self, x: float, y: float):
         self.data[x].append(y)
+        self.dirty()
 
     def add_many(self, x: float, ys: List[float]):
         self.data[x].extend(ys)
+        self.dirty()
+
 
 
     def merge_equal(self, b: Metric) -> Metric:
@@ -40,18 +46,21 @@ class Metric:
 
         for md in [a, b]:
             missing = {}
+
+
             for k in all_keys:
                 if k not in md.data:
-                    missing[k] = [missing_value(md.data, k)]
+                    missing[k] = [missing_value(md, k)]
 
             md.data.update(missing)
 
         result = Metric(a.x_label, a.y_label)
         result.data.update({k: v for k, v in sorted(a.data.items())})
         for k, v in b.data.items():
-            result.add_many(k, v)
+            result.add_many(x=k, ys=v)
 
         return result
+
 
     def merge_in(self, small_other:Metric) -> Metric:
 
@@ -60,8 +69,9 @@ class Metric:
             result = Metric(self.x_label, self.y_label)
             result.data.update(self.data)
 
+
             for k in result.data.keys():
-                result.add_record(k, missing_value(small_other.data, k))
+                result.add_record(x=k, y=missing_value(small_other, k))
 
             return result
 

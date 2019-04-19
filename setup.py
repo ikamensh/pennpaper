@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ilya_ezplot",
-    version="0.0.1",
+    version="0.0.3",
     author="Ilya Kamenshchikov",
     author_email="ikamenshchikov@gmail.com",
     description="Set of utilities for ploting results of non-deterministic experiments, "
@@ -13,7 +13,11 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ikamensh/ddpg",
-    packages=setuptools.find_packages(),
+    packages=["ilya_ezplot",
+              "ilya_ezplot.metric",
+              "ilya_ezplot.plot",
+              "ilya_ezplot.processing",],
+    package_dir={'ilya_ezplot': 'ilya_ezplot'},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

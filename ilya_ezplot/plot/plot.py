@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from ilya_ezplot._processing.running_avg import apply_running_average
+from ilya_ezplot.processing.running_avg import apply_running_average
+from ilya_ezplot.processing.momentum import apply_momentum
 import statistics
 import numpy as np
 from typing import Dict
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from ilya_ezplot.plot import Metric
+    from ilya_ezplot import Metric
 
 import matplotlib
 matplotlib.use('Qt4Agg')
@@ -21,30 +22,17 @@ def maybe_make_dir(folder):
 
 def ez_plot(metric: Metric, folder, name=None):
 
-    metric.sort()
-
     maybe_make_dir(folder)
     plt.clf()
 
-    avg = np.array([sum(l) / len(l) for l in metric.data.values()])
-    stdev = []
-    for l in metric.data.values():
-        if len(l) > 1:
-            stdev.append(statistics.stdev(l))
-        else:
-            stdev.append(0)
-    stdev = np.array(stdev)
-
-    plt.plot(metric.data.keys(), avg)
-    plt.fill_between(metric.data.keys(), avg - stdev, avg + stdev, alpha=0.2)
     plt.xlabel(metric.x_label)
     plt.ylabel(metric.y_label)
     plt.grid()
 
-    path = os.path.join(
-        folder,
-        (name or f"{metric.y_label}_{metric.x_label}") +
-        ".png")
+    _plot(metric.y_label, metric)
+
+
+    path = os.path.join(folder, (name or f"{metric.y_label}_{metric.x_label}") + ".png")
     print(path)
     plt.savefig(path)
 
@@ -62,24 +50,35 @@ def plot_group(metrics: Dict[str, Metric], folder: str, name: str = None):
     plt.grid()
 
     for label, metric in metrics.items():
+        _plot(label, metric, stdev_factor = 0.7)
+    plt.legend(loc='best')
 
-        avg = np.array([sum(l) / len(l) for l in metric.data.values()])
-        stdev = []
-        for l in metric.data.values():
-            if len(l) > 1:
-                stdev.append(statistics.stdev(l))
-            else:
-                stdev.append(0)
+    path = os.path.join(folder, (name or f"{metric.y_label}_{metric.x_label}") + ".png")
+    print(path)
+    plt.savefig(path, dpi=275)
+
+
+def _plot(label: str, metric: Metric, stdev_factor: float = 1.):
+    """
+    Add a curve to the plot, based on the given metric. Applies adaptive running average and
+    plots the standard deviation as shaded area (scaled by stdev_factor).
+
+    :param label: legend name for the curve
+    """
+    metric.sort()
+    avg = np.array([sum(l) / len(l) for l in metric.data.values()])
+
+    smoothen = 0.6 + 0.399 * len(avg) / (len(avg) + 100)
+    avg = apply_running_average(avg, smoothen)
+    style = {"linewidth": 0.8}
+    style.update(metric.style_kwargs)
+    plt.plot(metric.data.keys(), avg, label=label, **style)
+
+    if metric.samples > 1:
+        stdev = np.std(np.array( list(metric.data.values())), axis=1)
+        stdev = apply_running_average(stdev, smoothen) * stdev_factor
         stdev = np.array(stdev)
 
-        smoothen = len(avg) / (len(avg) + 100)
-
-        avg = apply_running_average(avg, smoothen)
-        stdev = apply_running_average(stdev, smoothen) / 3
-
-        style = {"linewidth":0.65}
-        style.update(metric.style_kwargs)
-        plt.plot(metric.data.keys(), avg, label=label, **style)
         maybe_color = {'color': style['color']} if 'color' in style else {}
         plt.fill_between(
             metric.data.keys(),
@@ -88,26 +87,6 @@ def plot_group(metrics: Dict[str, Metric], folder: str, name: str = None):
             alpha=0.2,
             **maybe_color
         )
-
-    plt.legend(loc='best')
-    path = os.path.join(
-        folder,
-        (name or f"{metric.y_label}_{metric.x_label}") +
-        ".png")
-    print(path)
-    plt.savefig(path, dpi=300)
-
-
-
-# def plot_many(name, folder, *args):
-#     maybe_make_dir(folder)
-#     plt.clf()
-#     for array in args:
-#         plt.plot(array)
-#     plt.ylabel(name)
-#     plt.xlabel('Generation')
-#     plt.grid()
-#     plt.savefig(os.path.join(folder, name + ".png"))
 
 
 def plot_histogram(array, name, folder):
