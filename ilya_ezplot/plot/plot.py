@@ -10,7 +10,6 @@ if TYPE_CHECKING:
     from ilya_ezplot import Metric
 
 import matplotlib
-matplotlib.use('Qt4Agg')
 from matplotlib import pyplot as plt
 
 import os
@@ -72,7 +71,7 @@ def _plot(label: str, metric: Metric, stdev_factor: float = 1.):
     avg = apply_running_average(avg, smoothen)
     style = {"linewidth": 0.8}
     style.update(metric.style_kwargs)
-    plt.plot(metric.data.keys(), avg, label=label, **style)
+    plt.plot(list(metric.data.keys()), avg, label=label, **style)
 
     if metric.samples > 1:
         stdev = np.std(np.array( list(metric.data.values())), axis=1)
