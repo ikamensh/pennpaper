@@ -6,7 +6,7 @@ metrics = [Metric('x', 'y') for x in range(10)]
 for m in metrics:
     for i in range(50):
         m.add_record(random.random(), random.random())
-    m.sort()
+    m._sort()
 
 
 m11 = sum(metrics)

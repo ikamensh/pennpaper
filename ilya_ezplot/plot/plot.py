@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from ilya_ezplot.processing.running_avg import apply_running_average
-from ilya_ezplot.processing.momentum import apply_momentum
-import statistics
 import numpy as np
 from typing import Dict
 from typing import TYPE_CHECKING
@@ -19,7 +17,7 @@ def maybe_make_dir(folder):
     os.makedirs(folder, exist_ok=True)
 
 
-def ez_plot(metric: Metric, folder, name=None):
+def ez_plot(metric: Metric, folder: str = '_plots', name=None):
 
     maybe_make_dir(folder)
     plt.clf()
@@ -36,7 +34,7 @@ def ez_plot(metric: Metric, folder, name=None):
     plt.savefig(path)
 
 
-def plot_group(metrics: Dict[str, Metric], folder: str, name: str = None):
+def plot_group(metrics: Dict[str, Metric], folder: str = '_plots', name: str = None):
 
     matplotlib.rcParams.update({'font.size': 3})
 
@@ -64,7 +62,7 @@ def _plot(label: str, metric: Metric, stdev_factor: float = 1.):
 
     :param label: legend name for the curve
     """
-    metric.sort()
+    metric._sort()
     avg = np.array([sum(l) / len(l) for l in metric.data.values()])
 
     smoothen = 0.6 + 0.399 * len(avg) / (len(avg) + 100)

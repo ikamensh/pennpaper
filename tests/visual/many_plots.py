@@ -9,7 +9,7 @@ def many_plots():
         for m in metrics:
             for i in range(40000):
                 m.add_record(i, random.random() + shift + 0.4*math.sin(i/200))
-            m.sort()
+            m._sort()
 
 
         return sum(metrics)
