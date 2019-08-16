@@ -17,7 +17,7 @@ def maybe_make_dir(folder):
     os.makedirs(folder, exist_ok=True)
 
 
-def ez_plot(metric: Metric, folder: str = '_plots', name=None):
+def ez_plot(metric: Metric, folder: str = '_plots', name=None, smoothen = True):
 
     maybe_make_dir(folder)
     plt.clf()
@@ -26,7 +26,7 @@ def ez_plot(metric: Metric, folder: str = '_plots', name=None):
     plt.ylabel(metric.y_label)
     plt.grid()
 
-    _plot(metric.y_label, metric)
+    _plot(metric.y_label, metric, smoothen)
 
 
     path = os.path.join(folder, (name or f"{metric.y_label}_{metric.x_label}") + ".png")
@@ -34,9 +34,9 @@ def ez_plot(metric: Metric, folder: str = '_plots', name=None):
     plt.savefig(path)
 
 
-def plot_group(metrics: Dict[str, Metric], folder: str = '_plots', name: str = None):
+def plot_group(metrics: Dict[str, Metric], folder: str = '_plots', name: str = None, smoothen = True):
 
-    matplotlib.rcParams.update({'font.size': 3})
+    matplotlib.rcParams.update({'font.size': 5})
 
     maybe_make_dir(folder)
     plt.clf()
@@ -47,7 +47,7 @@ def plot_group(metrics: Dict[str, Metric], folder: str = '_plots', name: str = N
     plt.grid()
 
     for label, metric in metrics.items():
-        _plot(label, metric, stdev_factor = 0.7)
+        _plot(label, metric, smoothen, stdev_factor = 0.7)
     plt.legend(loc='best')
 
     path = os.path.join(folder, (name or f"{metric.y_label}_{metric.x_label}") + ".png")
@@ -55,7 +55,7 @@ def plot_group(metrics: Dict[str, Metric], folder: str = '_plots', name: str = N
     plt.savefig(path, dpi=275)
 
 
-def _plot(label: str, metric: Metric, stdev_factor: float = 1.):
+def _plot(label: str, metric: Metric, smoothen: bool, stdev_factor: float = 1.):
     """
     Add a curve to the plot, based on the given metric. Applies adaptive running average and
     plots the standard deviation as shaded area (scaled by stdev_factor).
@@ -65,15 +65,17 @@ def _plot(label: str, metric: Metric, stdev_factor: float = 1.):
     metric._sort()
     avg = np.array([sum(l) / len(l) for l in metric.data.values()])
 
-    smoothen = 0.6 + 0.399 * len(avg) / (len(avg) + 100)
-    avg = apply_running_average(avg, smoothen)
+    if smoothen:
+        smoothen_k = 0.1 + 0.899 * len(avg) / (len(avg) + 100)
+        avg = apply_running_average(avg, smoothen_k)
     style = {"linewidth": 0.8}
     style.update(metric.style_kwargs)
     plt.plot(list(metric.data.keys()), avg, label=label, **style)
 
     if metric.samples > 1:
         stdev = np.std(np.array( list(metric.data.values())), axis=1)
-        stdev = apply_running_average(stdev, smoothen) * stdev_factor
+        if smoothen:
+            stdev = apply_running_average(stdev, smoothen_k) * stdev_factor
         stdev = np.array(stdev)
 
         maybe_color = {'color': style['color']} if 'color' in style else {}

@@ -3,6 +3,9 @@ import numpy as np
 
 
 def _running_avg(data: List[float], smoothen: float = 0.1):
+    if len(data) == 0:
+        return data
+
     result = [data[0]]
     for x in data[1:]:
         result.append(result[-1] * smoothen + x * (1 - smoothen))

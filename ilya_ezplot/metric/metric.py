@@ -7,17 +7,18 @@ import copy
 from ilya_ezplot.metric.cached_parameters_mixin import CachedParamMixin
 from ilya_ezplot.metric.interpolate import missing_value
 
-
 @dataclass(eq=False)
 class Metric(CachedParamMixin):
-    x_label: str
-    y_label: str
+    x_label: str = field(default='x')
+    y_label: str = field(default='y')
     data: DefaultDict[float, List[float]] = field(default_factory=lambda: defaultdict(list))
     style_kwargs: Dict[str: Any] = field(default_factory=lambda: {})
 
     @property
     def samples(self):
         # assert len(set( len(x) for x in self.data.values() )) == 1
+        if not self.data:
+            return 0
         return len(next(iter(self.data.values())))
 
     def _sort(self):
@@ -33,9 +34,17 @@ class Metric(CachedParamMixin):
         self.data[x].extend(ys)
         self.dirty()
 
-    def add_arrays(self, xs, ys):
-        for x, y in zip(xs, ys):
-            self.add_record(x, y)
+    def add_arrays(self, xs, ys, new_sample = False):
+        if new_sample and self.samples:
+            new = Metric()
+            for x, y in zip(xs, ys):
+                new.add_record(x, y)
+            new = self.__add__(new)
+            self.data = new.data
+
+        else:
+            for x, y in zip(xs, ys):
+                self.add_record(x, y)
 
     def _merge_equal(self, b: Metric) -> Metric:
         """ Modifies metric data a and b looking for keys not shared between the two,
@@ -73,6 +82,14 @@ class Metric(CachedParamMixin):
         return result
 
     def __add__(self, other: Metric) -> Metric:
+        if self.samples == 0:
+            return other
+        elif other.samples == 0:
+            return self
+
+        self._sort()
+        other._sort()
+
         if self.samples == other.samples:
             return self._merge_equal(other)
         else:

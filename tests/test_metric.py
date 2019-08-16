@@ -49,7 +49,6 @@ def test_summ_many():
     for m in metrics:
         for i in range(50):
             m.add_record(x=random.random(), y=random.random())
-        m._sort()
 
     m11 = sum(metrics)
 
@@ -93,7 +92,6 @@ def test_summ_many_originals_intact():
     for m in metrics:
         for i in range(50):
             m.add_record(x=random.random(), y=random.random())
-        m._sort()
 
     m11 = sum(metrics)
 
