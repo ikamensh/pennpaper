@@ -9,6 +9,7 @@ import os
 from ilya_ezplot.metric.cached_parameters_mixin import CachedParamMixin
 from ilya_ezplot.metric.interpolate import missing_value
 
+default_folder = "_ez_metrics"
 
 @dataclass(eq=False)
 class Metric(CachedParamMixin):
@@ -50,14 +51,14 @@ class Metric(CachedParamMixin):
             for x, y in zip(xs, ys):
                 self.add_record(x, y)
 
-    def save(self, folder=".ez_metrics"):
+    def save(self, folder=default_folder):
         os.makedirs(folder, exist_ok=True)
 
         with open( os.path.join(folder, f"{self.name}.ezm"), 'wb') as f:
             pickle.dump(self, file=f)
 
     @staticmethod
-    def load_all(folder="_ez_metrics") -> List[Metric]:
+    def load_all(folder=default_folder) -> List[Metric]:
         if not os.path.isdir(folder):
             raise FileNotFoundError(folder)
 
