@@ -18,7 +18,7 @@ def test_plot_group(tmpdir):
     m2.add_ys(4, [5, 6, -1])
 
     files_before = len(os.listdir(tmpdir))
-    plot_group({'m1': m, 'm2': m2}, tmpdir, "bla3")
+    plot_group([m, m2], tmpdir, "bla3")
     files_after = len(os.listdir(tmpdir))
 
     assert files_after > files_before

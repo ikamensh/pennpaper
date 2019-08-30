@@ -3,12 +3,16 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import DefaultDict, List, Any, Dict
 import copy
+import pickle
+import os
 
 from ilya_ezplot.metric.cached_parameters_mixin import CachedParamMixin
 from ilya_ezplot.metric.interpolate import missing_value
 
+
 @dataclass(eq=False)
 class Metric(CachedParamMixin):
+    name: str = field(default='unknown')
     x_label: str = field(default='x')
     y_label: str = field(default='y')
     data: DefaultDict[float, List[float]] = field(default_factory=lambda: defaultdict(list))
@@ -34,7 +38,7 @@ class Metric(CachedParamMixin):
         self.data[x].extend(ys)
         self.dirty()
 
-    def add_arrays(self, xs, ys, new_sample = False):
+    def add_arrays(self, xs, ys, new_sample=False):
         if new_sample and self.samples:
             new = Metric()
             for x, y in zip(xs, ys):
@@ -45,6 +49,26 @@ class Metric(CachedParamMixin):
         else:
             for x, y in zip(xs, ys):
                 self.add_record(x, y)
+
+    def save(self, folder=".ez_metrics"):
+        os.makedirs(folder, exist_ok=True)
+
+        with open( os.path.join(folder, f"{self.name}.ezm"), 'wb') as f:
+            pickle.dump(self, file=f)
+
+    @staticmethod
+    def load_all(folder="_ez_metrics") -> List[Metric]:
+        if not os.path.isdir(folder):
+            raise FileNotFoundError(folder)
+
+        metrics = []
+        for file in os.listdir(folder):
+            if file[-4:] == ".ezm":
+                with open(os.path.join(folder, file), 'rb') as f:
+                    metrics.append( pickle.load(f) )
+
+        return metrics
+
 
     def _merge_equal(self, b: Metric) -> Metric:
         """ Modifies metric data a and b looking for keys not shared between the two,

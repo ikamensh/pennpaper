@@ -97,3 +97,35 @@ def test_summ_many_originals_intact():
 
     m1 = metrics[0]
     assert m1.samples == 1
+
+
+def test_cycle_save(tmpdir):
+
+    m1 = Metric("x", "y")
+    m1.add_ys(x=2, ys=[3])
+    m1.add_ys(x=3, ys=[3])
+
+    m1.save(tmpdir)
+
+    ms = Metric.load_all(tmpdir)
+
+    assert len(ms) == 1
+
+    assert m1.__dict__ == ms[0].__dict__
+
+def test_load_many(tmpdir):
+
+    m1 = Metric("m1", "x", "y")
+    m1.add_ys(x=2, ys=[3])
+    m1.add_ys(x=3, ys=[3])
+
+    m2 = Metric("m2", "x", "y")
+    m2.add_ys(x=2, ys=[15])
+    m2.add_ys(x=3, ys=[10])
+
+    m1.save(tmpdir)
+    m2.save(tmpdir)
+
+    ms = Metric.load_all(tmpdir)
+    assert len(ms) == 2
+
