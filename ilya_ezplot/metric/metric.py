@@ -1,7 +1,7 @@
 from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass, field
-from typing import DefaultDict, List, Any, Dict
+from typing import DefaultDict, List, Any, Dict, SupportsFloat
 import copy
 import pickle
 import os
@@ -32,15 +32,15 @@ class Metric(CachedParamMixin):
         self.data = defaultdict(list)
         self.data.update({k: v for k, v in sorted(temp.items())})
 
-    def add_record(self, x: float, y: float):
+    def add_record(self, x: SupportsFloat, y: SupportsFloat):
         self.data[x].append(y)
         self.dirty()
 
-    def add_ys(self, x: float, ys: List[float]):
+    def add_ys(self, x: SupportsFloat, ys: List[SupportsFloat]):
         self.data[x].extend(ys)
         self.dirty()
 
-    def add_arrays(self, xs, ys, new_sample=False):
+    def add_arrays(self, xs: List[SupportsFloat], ys: List[SupportsFloat], new_sample=False):
         """
         Add a list of measurements to the metric. xs and ys must be arrays of same length.
 
@@ -50,7 +50,7 @@ class Metric(CachedParamMixin):
         assert len(xs) == len(ys)
         self.add_dict({x:y for x, y in zip(xs, ys)}, new_sample)
 
-    def add_dict(self, dictionary: Dict[float, float], new_sample=False):
+    def add_dict(self, dictionary: Dict[SupportsFloat, SupportsFloat], new_sample=False):
         """
         :param dictionary: the dictionary to add to the metric
         :param new_sample: If the arrays are to be considered a separate experiment,
