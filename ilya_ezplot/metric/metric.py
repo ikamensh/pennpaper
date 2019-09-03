@@ -11,6 +11,7 @@ from ilya_ezplot.metric.interpolate import missing_value
 
 default_folder = "_ez_metrics"
 
+
 @dataclass(eq=False)
 class Metric(CachedParamMixin):
     name: str = field(default='unknown')
@@ -40,21 +41,36 @@ class Metric(CachedParamMixin):
         self.dirty()
 
     def add_arrays(self, xs, ys, new_sample=False):
+        """
+        Add a list of measurements to the metric. xs and ys must be arrays of same length.
+
+        :param new_sample: If the arrays are to be considered a separate experiment,
+        or a part of current experiment.
+        """
+        assert len(xs) == len(ys)
+        self.add_dict({x:y for x, y in zip(xs, ys)}, new_sample)
+
+    def add_dict(self, dictionary: Dict[float, float], new_sample=False):
+        """
+        :param dictionary: the dictionary to add to the metric
+        :param new_sample: If the arrays are to be considered a separate experiment,
+        or a part of current experiment.
+        """
         if new_sample and self.samples:
             new = Metric()
-            for x, y in zip(xs, ys):
+            for x, y in dictionary.items():
                 new.add_record(x, y)
             new = self.__add__(new)
             self.data = new.data
 
         else:
-            for x, y in zip(xs, ys):
+            for x, y in dictionary.items():
                 self.add_record(x, y)
 
     def save(self, folder=default_folder):
         os.makedirs(folder, exist_ok=True)
 
-        with open( os.path.join(folder, f"{self.name}.ezm"), 'wb') as f:
+        with open(os.path.join(folder, f"{self.name}.ezm"), 'wb') as f:
             pickle.dump(self, file=f)
 
     @staticmethod
@@ -66,10 +82,9 @@ class Metric(CachedParamMixin):
         for file in os.listdir(folder):
             if file[-4:] == ".ezm":
                 with open(os.path.join(folder, file), 'rb') as f:
-                    metrics.append( pickle.load(f) )
+                    metrics.append(pickle.load(f))
 
         return metrics
-
 
     def _merge_equal(self, b: Metric) -> Metric:
         """ Modifies metric data a and b looking for keys not shared between the two,

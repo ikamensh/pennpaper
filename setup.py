@@ -10,7 +10,7 @@ def get_requirements():
 
 setuptools.setup(
     name="ilya_ezplot",
-    version="0.07",
+    version="0.08",
     author="Ilya Kamenshchikov",
     author_email="ikamenshchikov@gmail.com",
     description="Set of utilities for ploting results of non-deterministic experiments, "
