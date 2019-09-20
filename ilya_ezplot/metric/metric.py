@@ -102,7 +102,7 @@ class Metric(CachedParamMixin):
 
             md.data.update(missing)
 
-        result = Metric(a.x_label, a.y_label)
+        result = Metric(a.name, a.x_label, a.y_label)
         result.data.update({k: v for k, v in sorted(a.data.items())})
         for k, v in b.data.items():
             result.add_ys(x=k, ys=v)
@@ -113,7 +113,7 @@ class Metric(CachedParamMixin):
 
         assert small_other.samples == 1
 
-        result = Metric(self.x_label, self.y_label)
+        result = Metric(self.name, self.x_label, self.y_label)
         result.data.update(self.data)
 
         for k in result.data.keys():
