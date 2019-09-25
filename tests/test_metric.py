@@ -55,6 +55,19 @@ def test_summ_many():
     assert 50 <= len(m11.data)  <= 500
     assert len( list(m11.data.values())[0] ) == 10
 
+def test_discard_warmup():
+
+    m = Metric()
+    for i in range(10):
+        m.add_record(i, i % 2)
+
+    m.discard_warmup(0.5)
+
+    assert 4 < len(m.data) < 6
+    assert 0 not in m.data
+    assert 8 in m.data
+
+
 
 def test_samples():
     m1 = Metric("x", "y")

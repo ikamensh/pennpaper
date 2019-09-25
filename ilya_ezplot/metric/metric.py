@@ -73,6 +73,21 @@ class Metric(CachedParamMixin):
         with open(os.path.join(folder, f"{self.name}.ezm"), 'wb') as f:
             pickle.dump(self, file=f)
 
+    def discard_warmup(self, part: float):
+        assert 0 < part < 1
+        self._sort()
+
+        keys = list(self.data.keys())
+        d_min, d_max = keys[0], keys[-1]
+
+        span = d_max - d_min
+
+        to_delete = [k for k in self.data if k < d_min + part*span]
+
+        for k in to_delete:
+            del self.data[k]
+
+
     @staticmethod
     def load_all(folder=default_folder) -> List[Metric]:
         if not os.path.isdir(folder):
