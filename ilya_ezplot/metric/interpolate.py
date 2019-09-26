@@ -25,6 +25,9 @@ def find_closest(m: Metric, key: metric_key) -> Tuple[metric_key, metric_key]:
 def missing_value(m: Metric, key: metric_key) -> float:
     """ uses interpolation or extrapolation to insert an intermediate value into mapping """
 
+    if len(m.data) == 1:
+        return next(iter(m.data.values()))[0]
+
     left, right = find_closest(m, key=key)
     val_left, val_right = avg(m.data[left]), avg(m.data[right])
     slope = (val_right - val_left) / (right - left)
