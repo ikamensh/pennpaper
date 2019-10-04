@@ -10,7 +10,7 @@ def get_requirements():
 
 setuptools.setup(
     name="ilya_ezplot",
-    version="0.10",
+    version="0.11",
     author="Ilya Kamenshchikov",
     author_email="ikamenshchikov@gmail.com",
     description="Set of utilities for ploting results of non-deterministic experiments, "
@@ -23,7 +23,7 @@ setuptools.setup(
               "ilya_ezplot.plot",
               "ilya_ezplot.processing",],
     package_dir={'ilya_ezplot': 'ilya_ezplot'},
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     install_requires=get_requirements(),
     classifiers=[
         "Programming Language :: Python :: 3",
