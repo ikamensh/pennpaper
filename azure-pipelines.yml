@@ -18,9 +18,15 @@ strategy:
     MacPython37:
       python.version: '3.7'
       vmImage: 'macOS-latest'
-    MacOldPython37:
-      python.version: '3.7'
-      vmImage: 'macOS-10.13'
+    MacPython36:
+      python.version: '3.6'
+      vmImage: 'macOS-latest'
+    LPython36:
+      python.version: '3.6'
+      vmImage: 'ubuntu-latest'
+    WPython36:
+      python.version: '3.6'
+      vmImage: 'vs2017-win2016'
     
     
 
