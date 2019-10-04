@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from ilya_ezplot.processing.running_avg import apply_running_average
 import numpy as np
 from typing import List
@@ -17,7 +15,7 @@ def maybe_make_dir(folder):
     os.makedirs(folder, exist_ok=True)
 
 
-def ez_plot(metric: Metric, folder: str = '_plots', name=None, smoothen = True, stdev_factor = None):
+def ez_plot(metric: 'Metric', folder: str = '_plots', name=None, smoothen = True, stdev_factor = None):
 
     maybe_make_dir(folder)
     plt.clf()
@@ -34,7 +32,7 @@ def ez_plot(metric: Metric, folder: str = '_plots', name=None, smoothen = True, 
     plt.savefig(path)
 
 
-def plot_group(metrics: List[Metric], folder: str = '_plots', name: str = None, smoothen = True, stdev_factor = None):
+def plot_group(metrics: List['Metric'], folder: str = '_plots', name: str = None, smoothen = True, stdev_factor = None):
 
     matplotlib.rcParams.update({'font.size': 8})
 
@@ -55,7 +53,7 @@ def plot_group(metrics: List[Metric], folder: str = '_plots', name: str = None, 
     plt.savefig(path, dpi=275)
 
 
-def _plot(metric: Metric, smoothen: bool, stdev_factor: float, label:str = None):
+def _plot(metric: 'Metric', smoothen: bool, stdev_factor: float, label:str = None):
     """
     Add a curve to the plot, based on the given metric. Applies adaptive running average and
     plots the standard deviation as shaded area (scaled by stdev_factor).

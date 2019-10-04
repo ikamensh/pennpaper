@@ -1,4 +1,4 @@
-from __future__ import annotations
+# from __future__ import annotations
 from typing import DefaultDict, List, Tuple, TYPE_CHECKING
 import bisect
 
@@ -10,7 +10,7 @@ metric_key = float
 metric_data = DefaultDict[metric_key, List[float]]
 def avg(a): return sum(a) / len(a)
 
-def find_closest(m: Metric, key: metric_key) -> Tuple[metric_key, metric_key]:
+def find_closest(m: 'Metric', key: metric_key) -> Tuple[metric_key, metric_key]:
     """ assumes keys are sorted."""
     if m.keysmin >= key: # neet to extrapolate
         left, right = m.all_keys[:2]
@@ -22,7 +22,7 @@ def find_closest(m: Metric, key: metric_key) -> Tuple[metric_key, metric_key]:
 
     return left, right
 
-def missing_value(m: Metric, key: metric_key) -> float:
+def missing_value(m: 'Metric', key: metric_key) -> float:
     """ uses interpolation or extrapolation to insert an intermediate value into mapping """
 
     if len(m.data) == 1:

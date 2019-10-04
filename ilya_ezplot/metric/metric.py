@@ -1,4 +1,3 @@
-from __future__ import annotations
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import DefaultDict, List, Any, Dict, SupportsFloat
@@ -18,7 +17,7 @@ class Metric(CachedParamMixin):
     x_label: str = field(default='x')
     y_label: str = field(default='y')
     data: DefaultDict[float, List[float]] = field(default_factory=lambda: defaultdict(list))
-    style_kwargs: Dict[str: Any] = field(default_factory=lambda: {})
+    style_kwargs: Dict[str, Any] = field(default_factory=lambda: {})
 
     @property
     def samples(self):
@@ -89,7 +88,7 @@ class Metric(CachedParamMixin):
 
 
     @staticmethod
-    def load_all(folder=default_folder) -> List[Metric]:
+    def load_all(folder=default_folder) -> List['Metric']:
         if not os.path.isdir(folder):
             raise FileNotFoundError(folder)
 
@@ -101,7 +100,7 @@ class Metric(CachedParamMixin):
 
         return metrics
 
-    def _merge_equal(self, b: Metric) -> Metric:
+    def _merge_equal(self, b: 'Metric') -> 'Metric':
         """ Modifies metric data a and b looking for keys not shared between the two,
          and inserting interpolated values"""
 
@@ -124,7 +123,7 @@ class Metric(CachedParamMixin):
 
         return result
 
-    def _merge_in(self, small_other: Metric) -> Metric:
+    def _merge_in(self, small_other: 'Metric') -> 'Metric':
 
         assert small_other.samples == 1
 
@@ -136,7 +135,7 @@ class Metric(CachedParamMixin):
 
         return result
 
-    def __add__(self, other: Metric) -> Metric:
+    def __add__(self, other: 'Metric') -> 'Metric':
         if self.samples == 0:
             return other
         elif other.samples == 0:
