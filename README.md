@@ -8,7 +8,7 @@ Installation:
 
 By example:
 
-```
+```python
 """
 We have a mysterious function that we would like to better understand on the interval [0.1, 5.].
 Unfortunately the function is noisy.
