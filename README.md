@@ -2,6 +2,10 @@
 
 Pen'n'paper is a package to easily collect the data about (noisy) processes and plot them for comparison. This package is not aiming at feature completeness. Instead it should give you an easy start during the phase of the project when you want to just concentrate on an experimental idea.
 
+Installation:
+`pip install pennpaper`
+
+
 By example:
 
 ```
