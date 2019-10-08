@@ -1,4 +1,3 @@
-# from __future__ import annotations
 from typing import DefaultDict, List, Tuple, TYPE_CHECKING
 import bisect
 

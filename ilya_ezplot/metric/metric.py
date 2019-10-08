@@ -1,6 +1,5 @@
 from collections import defaultdict
-from dataclasses import dataclass, field
-from typing import DefaultDict, List, Any, Dict, SupportsFloat
+from typing import DefaultDict, List, Any, Dict, SupportsFloat, Union, TYPE_CHECKING
 import copy
 import pickle
 import os
@@ -10,14 +9,18 @@ from ilya_ezplot.metric.interpolate import missing_value
 
 default_folder = "_ez_metrics"
 
+if TYPE_CHECKING:
+    from numpy import ndarray
 
-@dataclass(eq=False)
+
 class Metric(CachedParamMixin):
-    name: str = field(default='unknown')
-    x_label: str = field(default='x')
-    y_label: str = field(default='y')
-    data: DefaultDict[float, List[float]] = field(default_factory=lambda: defaultdict(list))
-    style_kwargs: Dict[str, Any] = field(default_factory=lambda: {})
+    def __init__(self, name="unknown", x_label="x", y_label="y", style_kwargs=None):
+        super().__init__()
+        self.name = name
+        self.x_label = x_label
+        self.y_label = y_label
+        self.data = defaultdict(list)
+        self.style_kwargs = style_kwargs or {}
 
     @property
     def samples(self):
@@ -39,7 +42,12 @@ class Metric(CachedParamMixin):
         self.data[x].extend(ys)
         self.dirty()
 
-    def add_arrays(self, xs: List[SupportsFloat], ys: List[SupportsFloat], new_sample=False):
+    def add_arrays(
+        self,
+        xs: Union['ndarray', List[SupportsFloat]],
+        ys: Union['ndarray', List[SupportsFloat]],
+        new_sample=False,
+    ):
         """
         Add a list of measurements to the metric. xs and ys must be arrays of same length.
 
@@ -47,9 +55,11 @@ class Metric(CachedParamMixin):
         or a part of current experiment.
         """
         assert len(xs) == len(ys)
-        self.add_dict({x:y for x, y in zip(xs, ys)}, new_sample)
+        self.add_dict({x: y for x, y in zip(xs, ys)}, new_sample)
 
-    def add_dict(self, dictionary: Dict[SupportsFloat, SupportsFloat], new_sample=False):
+    def add_dict(
+        self, dictionary: Dict[SupportsFloat, SupportsFloat], new_sample=False
+    ):
         """
         :param dictionary: the dictionary to add to the metric
         :param new_sample: If the arrays are to be considered a separate experiment,
@@ -69,7 +79,7 @@ class Metric(CachedParamMixin):
     def save(self, folder=default_folder):
         os.makedirs(folder, exist_ok=True)
 
-        with open(os.path.join(folder, f"{self.name}.ezm"), 'wb') as f:
+        with open(os.path.join(folder, f"{self.name}.ezm"), "wb") as f:
             pickle.dump(self, file=f)
 
     def discard_warmup(self, part: float):
@@ -81,26 +91,25 @@ class Metric(CachedParamMixin):
 
         span = d_max - d_min
 
-        to_delete = [k for k in self.data if k < d_min + part*span]
+        to_delete = [k for k in self.data if k < d_min + part * span]
 
         for k in to_delete:
             del self.data[k]
 
-
     @staticmethod
-    def load_all(folder=default_folder) -> List['Metric']:
+    def load_all(folder=default_folder) -> List["Metric"]:
         if not os.path.isdir(folder):
             raise FileNotFoundError(folder)
 
         metrics = []
         for file in os.listdir(folder):
             if file[-4:] == ".ezm":
-                with open(os.path.join(folder, file), 'rb') as f:
+                with open(os.path.join(folder, file), "rb") as f:
                     metrics.append(pickle.load(f))
 
         return metrics
 
-    def _merge_equal(self, b: 'Metric') -> 'Metric':
+    def _merge_equal(self, b: "Metric") -> "Metric":
         """ Modifies metric data a and b looking for keys not shared between the two,
          and inserting interpolated values"""
 
@@ -123,7 +132,7 @@ class Metric(CachedParamMixin):
 
         return result
 
-    def _merge_in(self, small_other: 'Metric') -> 'Metric':
+    def _merge_in(self, small_other: "Metric") -> "Metric":
 
         assert small_other.samples == 1
 
@@ -135,7 +144,7 @@ class Metric(CachedParamMixin):
 
         return result
 
-    def __add__(self, other: 'Metric') -> 'Metric':
+    def __add__(self, other: "Metric") -> "Metric":
         if self.samples == 0:
             return other
         elif other.samples == 0:
