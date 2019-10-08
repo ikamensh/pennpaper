@@ -1,4 +1,4 @@
-from ilya_ezplot import Metric
+from pennpaper import Metric
 
 
 def test_unique():

@@ -1,4 +1,4 @@
-from ilya_ezplot import Metric, ez_plot
+from pennpaper import Metric, plot
 
 import random
 
@@ -9,7 +9,7 @@ def plot_longs():
         for i in range(n):
             long_metric.add_record(random.random(), random.random())
 
-        ez_plot(long_metric, 'temp', name=f'longer_metric_{n}')
+        plot(long_metric, 'temp', name=f'longer_metric_{n}')
 
 
 from cProfile import Profile

@@ -1,5 +1,5 @@
-from ilya_ezplot.processing.running_avg import apply_running_average
-from ilya_ezplot.processing.momentum import apply_momentum
+from pennpaper.processing.running_avg import apply_running_average
+from pennpaper.processing.momentum import apply_momentum
 
 
 import random

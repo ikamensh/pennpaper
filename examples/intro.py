@@ -1,6 +1,6 @@
 import numpy as np
 
-from ilya_ezplot import Metric, plot_group, ez_plot
+from pennpaper import Metric, plot_group, plot
 
 def noisy_mapping( mapping ):
     def _(x):
@@ -18,7 +18,7 @@ Y = pow2(X)
 m = Metric('pow2')
 m.add_arrays(X, Y)
 
-ez_plot(m, name='my_plot')
+plot(m, name='my_plot')
 
 
 Y2 = pow2(X)
@@ -29,7 +29,7 @@ m2.add_arrays(X, Y2)
 plot_group([m, m2], name='my_plot_a_few')
 
 
-ez_plot(m + m2, name='my_plot')
+plot(m + m2, name='my_plot')
 
 
 

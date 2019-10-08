@@ -1,4 +1,4 @@
-from ilya_ezplot import Metric, ez_plot
+from pennpaper import Metric, plot
 
 m1 = Metric()
 m1.add_record(1,1)
@@ -13,5 +13,5 @@ m3 = m1 + m2
 
 print(m3.data, m3.samples)
 
-ez_plot(m3)
-ez_plot(m3, smoothen=False, name='true')
+plot(m3)
+plot(m3, smoothen=False, name='true')

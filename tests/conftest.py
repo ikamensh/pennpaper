@@ -1,5 +1,5 @@
 try:
-    import ilya_ezplot
+    import pennpaper
 except ImportError:
     # assume remote server enters the application in tests/, home would be tests/..
     import sys

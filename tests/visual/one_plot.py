@@ -1,4 +1,4 @@
-from ilya_ezplot import Metric, ez_plot
+from pennpaper import Metric, plot
 
 import random
 
@@ -11,12 +11,12 @@ for m in metrics:
 
 m11 = sum(metrics)
 
-ez_plot(metrics[0], 'temp', name="single_random")
-ez_plot(m11, 'temp', name="summ_10_random")
+plot(metrics[0], 'temp', name="single_random")
+plot(m11, 'temp', name="summ_10_random")
 
 straight = Metric('x', 'y')
 for i in range(50):
     straight.add_record(i, i + 0.1*random.random())
 
-ez_plot(straight, 'temp', name='straight')
+plot(straight, 'temp', name='straight')
 

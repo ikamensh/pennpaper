@@ -1,6 +1,6 @@
 import numpy as np
 
-from ilya_ezplot import Metric, plot_group
+from pennpaper import Metric, plot_group
 
 xs = np.arange(0.1, 5, step=0.01)
 

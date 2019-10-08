@@ -9,7 +9,7 @@ def get_requirements():
         return fp.read()
 
 setuptools.setup(
-    name="ilya_ezplot",
+    name="pennpaper",
     version="0.11",
     author="Ilya Kamenshchikov",
     author_email="ikamenshchikov@gmail.com",
@@ -18,11 +18,11 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ikamensh/ilya_ezplot",
-    packages=["ilya_ezplot",
-              "ilya_ezplot.metric",
-              "ilya_ezplot.plot",
-              "ilya_ezplot.processing",],
-    package_dir={'ilya_ezplot': 'ilya_ezplot'},
+    packages=["pennpaper",
+              "pennpaper.metric",
+              "pennpaper.plot",
+              "pennpaper.processing",],
+    package_dir={'pennpaper': 'pennpaper'},
     python_requires=">=3.6",
     install_requires=get_requirements(),
     classifiers=[

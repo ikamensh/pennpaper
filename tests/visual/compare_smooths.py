@@ -1,5 +1,5 @@
-from ilya_ezplot.processing.running_avg import apply_running_average
-from ilya_ezplot.processing.momentum import apply_momentum
+from pennpaper.processing.running_avg import apply_running_average
+from pennpaper.processing.momentum import apply_momentum
 
 import random
 for k_smoothen, tag in zip([0.3, 0.7, 0.95], [30, 70, 95]):
@@ -8,7 +8,7 @@ for k_smoothen, tag in zip([0.3, 0.7, 0.95], [30, 70, 95]):
     m = apply_momentum(x, smoothen=k_smoothen)
     s = apply_running_average(x, smoothen=k_smoothen)
 
-    from ilya_ezplot.plot.plot import plt
+    from pennpaper.plot.plot import plt
 
     plt.clf()
     plt.plot(x, color = 'blue')

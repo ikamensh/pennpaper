@@ -1,9 +1,9 @@
-from ilya_ezplot.processing.running_avg import apply_running_average
+from pennpaper.processing.running_avg import apply_running_average
 import numpy as np
 from typing import List
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from ilya_ezplot import Metric
+    from pennpaper import Metric
 
 import matplotlib
 from matplotlib import pyplot as plt
@@ -15,7 +15,7 @@ def maybe_make_dir(folder):
     os.makedirs(folder, exist_ok=True)
 
 
-def ez_plot(metric: 'Metric', folder: str = '_plots', name=None, smoothen = True, stdev_factor = None):
+def plot(metric: 'Metric', folder: str = '_plots', name=None, smoothen = True, stdev_factor = None):
 
     maybe_make_dir(folder)
     plt.clf()

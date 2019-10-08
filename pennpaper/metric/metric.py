@@ -4,8 +4,8 @@ import copy
 import pickle
 import os
 
-from ilya_ezplot.metric.cached_parameters_mixin import CachedParamMixin
-from ilya_ezplot.metric.interpolate import missing_value
+from pennpaper.metric.cached_parameters_mixin import CachedParamMixin
+from pennpaper.metric.interpolate import missing_value
 
 default_folder = "_ez_metrics"
 

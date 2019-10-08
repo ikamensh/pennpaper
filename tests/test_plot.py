@@ -1,5 +1,5 @@
 import os
-from ilya_ezplot import Metric, plot_group, ez_plot
+from pennpaper import Metric, plot_group, plot
 
 
 def test_plot_group(tmpdir):
@@ -32,7 +32,7 @@ def test_ezplot(tmpdir):
     m.add_ys(4, [5, 6, 12])
 
     files_before = len(os.listdir(tmpdir))
-    ez_plot(m, tmpdir, "bla3")
+    plot(m, tmpdir, "bla3")
     files_after = len(os.listdir(tmpdir))
 
     assert files_after > files_before

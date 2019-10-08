@@ -2,7 +2,7 @@ from typing import DefaultDict, List, Tuple, TYPE_CHECKING
 import bisect
 
 if TYPE_CHECKING:
-    from ilya_ezplot import Metric
+    from pennpaper import Metric
 
 
 metric_key = float

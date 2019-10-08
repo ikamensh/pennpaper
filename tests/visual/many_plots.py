@@ -1,4 +1,4 @@
-from ilya_ezplot import Metric, plot_group
+from pennpaper import Metric, plot_group
 
 import math
 import random
