@@ -9,10 +9,9 @@ Installation:
 By example:
 
 ```python
-"""
-We have a mysterious function that we would like to better understand on the interval [0.1, 5.].
-Unfortunately the function is noisy.
-"""
+# We have a mysterious function that we would like to better understand on the interval [0.1, 5.].
+# Unfortunately the function is noisy.
+
 import numpy as np
 
 X = np.arange(0.1, 5, step=0.01)
@@ -32,10 +31,7 @@ def noisy_mapping(mapping):
 pow2 = noisy_mapping(lambda x: x ** 2)
 
 
-"""
-lets record the pairs (x, f(x)) in a metric and make a plot:
-"""
-
+# lets record the pairs (x, f(x)) in a metric and make a plot:
 from pennpaper import Metric, plot_group, plot
 
 m1 = Metric("pow2")
@@ -44,11 +40,12 @@ for x in X:
 
 plot(m1)
 
-
+# try again - see in how far it repeats itself.
 m2 = Metric("pow2_second_try")
 for x in X:
     m2.add_record(x, pow2(x))
 
+# lets plot two metrics side-by-side
 plot_group([m1, m2])
 
 
