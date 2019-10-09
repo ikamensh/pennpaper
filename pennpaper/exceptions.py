@@ -1,0 +1,2 @@
+class PennpaperException(Exception):
+    pass
