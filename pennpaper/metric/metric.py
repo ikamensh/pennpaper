@@ -3,6 +3,7 @@ from typing import DefaultDict, List, Any, Dict, SupportsFloat, Union, TYPE_CHEC
 import copy
 import pickle
 import os
+import warnings
 
 from pennpaper.metric.cached_parameters_mixin import CachedParamMixin
 from pennpaper.metric.interpolate import missing_value
@@ -44,8 +45,8 @@ class Metric(CachedParamMixin):
 
     def add_arrays(
         self,
-        xs: Union['ndarray', List[SupportsFloat]],
-        ys: Union['ndarray', List[SupportsFloat]],
+        xs: Union["ndarray", List[SupportsFloat]],
+        ys: Union["ndarray", List[SupportsFloat]],
         new_sample=False,
     ):
         """
@@ -154,12 +155,20 @@ class Metric(CachedParamMixin):
         other._sort()
 
         if self.samples == other.samples:
-            return self._merge_equal(other)
+            result = self._merge_equal(other)
         else:
             smaller = min([self, other], key=lambda x: x.samples)
             bigger = max([self, other], key=lambda x: x.samples)
 
-            return bigger._merge_in(smaller)
+            result = bigger._merge_in(smaller)
+
+        if self.name != other.name:
+            warnings.warn(
+                f"\nMerging two metrics with different names: '{self.name}' and '{other.name}'."
+                f" Resulting metric is assigned name '{result.name}'"
+            )
+
+        return result
 
     def __radd__(self, other):
         # support sum
