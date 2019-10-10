@@ -10,7 +10,7 @@ def get_requirements():
 
 setuptools.setup(
     name="pennpaper",
-    version="0.14",
+    version="0.15",
     author="Ilya Kamenshchikov",
     author_email="ikamenshchikov@gmail.com",
     description="Set of utilities for ploting results of non-deterministic experiments, "

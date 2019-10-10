@@ -7,10 +7,11 @@ import pytest
 
 
 def test_same_length():
-    for i in range(10):
+    for i in range(100):
         x = [random.random() for i in range(random.randint(10,100))]
-        s = smoothen_func(x, smoothen=random.random()*0.99 + 1e-3)
-        assert len(x) == len(s)
+        k_smoothen = random.random()*0.99 + 1e-3
+        s = smoothen_func(x, smoothen=k_smoothen)
+        assert len(x) == len(s), f"failed on {i}th iteration for {k_smoothen} and {x}"
 
 
 

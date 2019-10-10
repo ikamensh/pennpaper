@@ -2,7 +2,7 @@ import numpy as np
 
 
 def conv_smooth(y, smoothen):
-    box_pts = int(2 * smoothen * len(y) ** (2 / 3)) + 1
+    box_pts = min(int(2 * smoothen * len(y) ** (2 / 3)) + 1, len(y) // 4)
 
     box = np.hstack([np.arange(box_pts), np.flip(np.arange(box_pts))]) + 1
     box = box * (1 / np.sum(box))
