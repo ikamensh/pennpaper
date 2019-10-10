@@ -34,7 +34,7 @@ for x in X:
 plot(m1)
 
 
-m2 = Metric("pow2_second_try")
+m2 = Metric("pow2_2")
 for x in X:
     m2.add_record(x, pow2(x))
 

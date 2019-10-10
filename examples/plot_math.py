@@ -1,37 +1,43 @@
 import numpy as np
-
-from pennpaper import Metric, plot_group
-
-
-xs = np.arange(0.1, 5, step=0.01)
-
-def noisy_mapping( mapping ):
-    def _(x):
-        y = mapping(x)
-        y += np.random.normal(size=y.size)
-        return y
-    return _
-
-funcs = {}
-funcs['sin'] = noisy_mapping(np.sin)
-funcs['log'] = noisy_mapping(np.log)
-funcs['pow1.5'] = noisy_mapping(lambda x: x**(3/2))
+from matplotlib import pyplot as plt
 
 
-from collections import defaultdict
+def measure():
+    def noisy_mapping( mapping ):
+        def _(x):
+            y = mapping(x)
+            y += np.random.normal(0, 2, size=y.size)
+            return y
+        return _
 
-metrics = defaultdict(list)
+    funcs = {}
+    funcs['sin'] = noisy_mapping(np.sin)
+    funcs['log'] = noisy_mapping(np.log)
+    funcs['pow1.5'] = noisy_mapping(lambda x: x**(3/2))
 
-for i in range(30):
-    for name, f in funcs.items():
-        m = Metric(name)
-        m.add_arrays(xs, f(xs))
-        metrics[m.name].append(m)
+    X = np.arange(0.1, 10, step=0.001)
 
-metrics = [sum(v) for v in metrics.values()]
 
-plot_group(metrics, name='smooth')
-plot_group(metrics, name='true', smoothen=False)
+    import pennpaper as pp
+    from collections import defaultdict
+
+    metrics = defaultdict(list)
+
+    for i in range(90):
+        for name, f in funcs.items():
+            m = pp.Metric(name)
+            m.add_arrays(X, f(X))
+            metrics[m.name].append(m)
+
+    metrics = [sum(v) for v in metrics.values()]
+
+    pp.plot_group(metrics)
+    pp.plot_group(metrics, smoothen=True)
+    
+from cProfile import Profile
+p = Profile()
+p.runcall(measure)
+p.print_stats('cumulative')
 
 
 

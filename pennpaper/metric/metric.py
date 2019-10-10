@@ -141,7 +141,10 @@ class Metric(CachedParamMixin):
         result.data.update(self.data)
 
         for k in result.data.keys():
-            result.add_record(x=k, y=missing_value(small_other, k))
+            if k in small_other.data:
+                result.add_record(x=k, y=small_other.data[k][0])
+            else:
+                result.add_record(x=k, y=missing_value(small_other, k))
 
         return result
 
