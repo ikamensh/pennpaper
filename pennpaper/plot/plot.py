@@ -1,4 +1,4 @@
-from pennpaper.processing.running_avg import apply_running_average
+from pennpaper.processing.conv import conv_smooth as smoothen_func
 import numpy as np
 from typing import List
 from typing import TYPE_CHECKING
@@ -109,12 +109,15 @@ def _plot(metric: "Metric", smoothen: bool, stdev_factor: float, label: str = No
 
     :param label: legend name for the curve
     """
+
+    smoothen_k = 0.25
+
     metric._sort()
     avg = np.array([sum(l) / len(l) for l in metric.data.values()])
 
     if smoothen:
-        smoothen_k = 0.1 + 0.899 * len(avg) / (len(avg) + 100)
-        avg = apply_running_average(avg, smoothen_k)
+        # smoothen_k = 0.1 + 0.899 * len(avg) / (len(avg) + 100)
+        avg = smoothen_func(avg, smoothen_k)
     style = {"linewidth": 0.8}
     style.update(metric.style_kwargs)
     plt.plot(list(metric.data.keys()), avg, label=label or metric.name, **style)
@@ -122,7 +125,7 @@ def _plot(metric: "Metric", smoothen: bool, stdev_factor: float, label: str = No
     if metric.samples > 1:
         stdev = np.std(np.array(list(metric.data.values())), axis=1)
         if smoothen:
-            stdev = apply_running_average(stdev, smoothen_k)
+            stdev = smoothen_func(stdev, smoothen_k)
         if stdev_factor is not None:
             stdev *= stdev_factor
         stdev = np.array(stdev)
