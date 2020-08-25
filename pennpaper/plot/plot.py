@@ -123,7 +123,9 @@ def _plot(metric: "Metric", smoothen: bool, stdev_factor: float, label: str = No
     plt.plot(list(metric.data.keys()), avg, label=label or metric.name, **style)
 
     if metric.samples > 1:
-        stdev = np.std(np.array(list(metric.data.values())), axis=1)
+        arr = list(metric.data.values())
+        from statistics import stdev
+        stdev = [stdev(l) for l in arr]
         if smoothen:
             stdev = smoothen_func(stdev, smoothen_k)
         if stdev_factor is not None:
